@@ -1,0 +1,21 @@
+/**Float label magic from me Kevin. Rad! */
+
+input {
+    border: 1px solid #DDDDDD !important;
+    padding: 10px !important;
+    margin: 15px 0 !important;
+    height: 55px !important;
+}
+label.label-floatlabel {
+    font-weight: bold;
+    font-size: 11px;
+    top: 4px !important;
+}
+
+.ng-hide {
+	/* this is just another form of hiding an element */
+	display:block!important;
+	position:absolute;
+	top:-9999px;
+	left:-9999px;
+}
