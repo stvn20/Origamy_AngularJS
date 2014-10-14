@@ -1,5 +1,5 @@
   //Angular.js app definition
-  var app = angular.module('origamy',[ ]);
+  var app = angular.module('origamy',['ui.bootstrap']);
 
 
 
@@ -15,50 +15,32 @@
 
 
   //Factory
-  app.factory('Tshirt',['$http', '$q', function($http, $q) {
+  app.factory('weatherService',['$http', '$q', function($http, $q) {
 
-    var URL   = 'http://nodejs-express-crud.herokuapp.com/';
+    var apiEndpoint   = 'http://api.openweathermap.org/data/2.5/forecast/daily';
 
       //Metodos publicos que retorna el factory
       return{
 
-        /*
-        * Returna TODAS las camisas
-        */
-        getAll : function(){
-
-          var defer = $q.defer();
-
-          $http({
-            method:'GET', 
-            url:URL + 'tshirt',
-            dataType: 'jsonp',
-            headers: {'Content-Type': 'application/json'}
-          }).
-          success(function(data, status, headers, config){
-            defer.resolve(data);
-          }).
-          error(function(data, status, headers, config){
-            defer.reject(data);
-          });
-
-          return defer.promise;
-        },
-        
-        insertTshirt : function (tshirt) {
-
+        getWeather : function(weather, unit) {
           var deferred = $q.defer();
-
-          $http.post(URL,tshirt).
-          success(function(data){
+          
+          unit = typeof unit !== 'undefined' ? unit : 'metric';
+          var uri = apiEndpoint + "?q=" + weather.zipcode + "&mode=json&units=" + unit + "&cnt="+ weather.days;
+          //console.log(uri);
+          //$http.post(uri).
+          $http({ 
+            method: 'POST', 
+            url: uri 
+          }).
+          success(function(data, status) {
             deferred.resolve(data);
           }).
-          error(function(){
-            deferred.reject();
+          error(function (error, status) {
+            deferred.reject(error);
           });
 
           return deferred.promise;
-
         }
 
       }
@@ -67,33 +49,29 @@
 
 
   //Controller
-  app.controller('OrigamyCtrl', ['$scope', 'Tshirt', function($scope, Tshirt){
+  app.controller('OrigamyCtrl', ['$scope', 'weatherService', function($scope, weatherService){
 
-      //Cargando datos ...
+    $scope.loading = false;
+    $scope.loaded = false;
+    $scope.oneAtATime = true;
+    $scope.status = {
+      isFirstOpen: true,
+      isFirstDisabled: false
+    };
+    
+    $scope.getWeather = function () {
       $scope.loading = true;
-      $scope.loaded = false;
-      $scope.tshirt = {};
 
-      //Carga los datos del factory
-      Tshirt.getAll().then( function(data){
+      weatherService.getWeather($scope.weather).then(function(data) {
 
-          //Cuando los recive los guarda en un arreglo de tshirts
-          $scope.tshirts = data;
-          console.log(data);
-          
-          //Oculta el cargando ...
+        $scope.weatherDetails = data;
+          //Hide spinner
           $scope.loading = false;
+          //Display info
           $scope.loaded = true;
-
         });
 
-      $scope.saveTshirt = function () {
-        console.log($scope.tshirt);
-        Tshirt.insertTshirt($scope.tshirt).then( function(data){
-          console.log(data);
-        });
-
-      };
+    };
 
 
-    }]);
+  }]);

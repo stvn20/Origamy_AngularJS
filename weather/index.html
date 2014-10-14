@@ -8,6 +8,8 @@
 
     <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.11.0/ui-bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.11.0/ui-bootstrap-tpls.min.js"></script>
     <link rel="stylesheet" href="style.css">
     <script src="app.js"></script>
   </head>
@@ -16,86 +18,93 @@
 
       <div class="container">
         <div class="row">
-
-          <h1>Ejemplo de Factories - Origamy Academy</h1>
-          <h3>Este ejemplo carga asyncronicamente los datos de un servicio</h3>
-          <hr>
-
-          <div class="cargando" ng-if="loading">
-            <h3>Cargando camisetas...</h3>
-            <img src="http://sierrafire.cr.usgs.gov/images/loading.gif" alt="">
+          <div class="col-md-12 text-center">
+            <h1>Weather API - Origamy Academy</h1>
           </div>
+        </div>
 
-          <div class="tshirts" ng-if="loaded" class="ng-hide">
+        <hr>
 
-            <!-- Button trigger modal -->
-            <button class="btn btn-primary" data-toggle="modal" data-target="#myModal">
-              Agregar camiseta
-            </button>
+        <div class="row">
+          <div class="col-md-12 text-center">
+            <form class="form-horizontal" role="form" ng-submit="getWeather()">
 
-            <!-- Modal -->
-            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-              <div class="modal-dialog">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                    <h4 class="modal-title" id="myModalLabel">Agregar camiseta</h4>
-                  </div>
-                  <div class="modal-body">
+              <div class="form-group">
+                <input type="text" class="form-control text-center" id="model" ng-model="weather.zipcode" placeholder="Zipcode" required>
+              </div>
 
-                    <form role="form" ng-submit="saveTshirt()">
+              <select ng-model="weather.days" class="form-control">
+                <option selected="selected">1</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+                <option>5</option>
+              </select>
 
-                      <div class="form-group">
-                        <label for="model">Modelo</label>
-                        <input type="text" class="form-control" id="model" ng-model="tshirt.model" placeholder="Modelo" required>
-                      </div>
+              <button type="submit" class="btn btn-primary">Search</button>   
 
-                      <div class="form-group">
-                        <label for="style">Estilo</label>
-                        <input type="text" class="form-control" id="style" ng-model="tshirt.style" placeholder="Estilo" required>
-                      </div>
+            </form>
+          </div>
+        </div>
 
-                      <div class="form-group">
-                        <label for="size">Tamaño</label>
-                        <input type="text" class="form-control" id="size" ng-model="tshirt.size" placeholder="Tamaño" required>
-                      </div>
+        <div class="cargando" ng-if="loading">
+          <div class="row">
+            <div class="col-md-12 text-center">
+              <h3>Loading Weather Forecast</h3>
+              <img src="http://preloaders.net/preloaders/712/Floating%20rays.gif" alt="Loading">
+            </div>
+          </div>
+        </div>
 
-                      <div class="form-group">
-                        <label for="color">Color</label>
-                        <input type="text" class="form-control" id="color" ng-model="tshirt.color" placeholder="Color" required>
-                      </div>
+    <div class="info" ng-if="loaded" class="ng-hide">
 
-                      <div class="form-group">
-                        <label for="price">Precio</label>
-                        <input type="text" class="form-control" id="price" ng-model="tshirt.price" placeholder="Precio" required>
-                      </div>
+      <div class="row">
+        <div class="col-md-12 text-center">
+          <h3>Weather Forecast for {{weatherDetails.city.name}}, {{weatherDetails.city.country}}</h3>
 
-                      <button type="submit" class="btn btn-primary">Agregar</button>
-                      
-                    </form>
-                  </div>
+          <accordion close-others="oneAtATime">
 
-                </div>
+          <accordion-group ng-repeat="(key, value) in weatherDetails.list">
+            
+            <accordion-heading>
+            
+            <div class="row">
+              <div class="col-md-6 text-left">
+                <span class="weather_description">
+                  <img ng-src="http://openweathermap.org/img/w/{{value.weather[0].icon}}.png"/>
+                  {{value.weather[0].description}}
+                </span>
+                <span class="weather_date">{{value.dt * 1000 | date:'dd MMM'}}</span>
+              </div>
+              <div class="col-md-6 text-right">
+                <span class="weather_temp">{{value.temp.day| number:0}}&#8451;</span>
+              </div>
+            </div>
+            </accordion-heading>
+
+            <div class="row">
+              <div class="col-md-4">
+                <h3>Humidity</h3>
+                {{value.humidity| number:0}}%
+              </div>
+              <div class="col-md-4">
+                <h3>Pressure</h3>
+                {{value.pressure| number:2}} hpa
+              </div>
+              <div class="col-md-4">
+                <h3>Wind</h3>
+                {{value.speed| number:2}} m/s
               </div>
             </div>
 
-            <h3> Lista de Camisas</h3>
+          </accordion-group>
 
-            <div class="row">
-              <div class="col-sm-6 col-md-4" ng-repeat="tshirt in tshirts">
-                <div class="thumbnail">
-                  <div class="caption">
-                    <h3>Modelo: {{tshirt.model}}</h3>
-                    <h5>Color: {{tshirt.color}}</h5>
-                    <h5>Modelo: {{tshirt.model}} </h5>
-                    <h5>Stilo: {{tshirt.style}} </h5>
-                  </div>
-                </div>
-              </div>
-            </div>     
-          </div>
+          </accordion>
         </div>
-      </div>
+      </div>     
     </div>
-  </body>
-  </html>
+  </div>
+</div>
+</div>
+</body>
+</html>
