@@ -3,6 +3,8 @@
   <head>
     <title> Ejemplo de Factory - Origamy</title>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.17/angular.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.17/angular-route.js"></script>
+
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
 
@@ -13,98 +15,8 @@
     <link rel="stylesheet" href="style.css">
     <script src="app.js"></script>
   </head>
-  <body>
-    <div class="wrapper" ng-controller="OrigamyCtrl">
-
-      <div class="container">
-        <div class="row">
-          <div class="col-md-12 text-center">
-            <h1>Weather API - Origamy Academy</h1>
-          </div>
-        </div>
-
-        <hr>
-
-        <div class="row">
-          <div class="col-md-12 text-center">
-            <form class="form-horizontal" role="form" ng-submit="getWeather()">
-
-              <div class="form-group">
-                <input type="text" class="form-control text-center" id="model" ng-model="weather.zipcode" placeholder="Zipcode" required>
-              </div>
-
-              <select ng-model="weather.days" class="form-control">
-                <option selected="selected">1</option>
-                <option>2</option>
-                <option>3</option>
-                <option>4</option>
-                <option>5</option>
-              </select>
-
-              <button type="submit" class="btn btn-primary">Search</button>   
-
-            </form>
-          </div>
-        </div>
-
-        <div class="cargando" ng-if="loading">
-          <div class="row">
-            <div class="col-md-12 text-center">
-              <h3>Loading Weather Forecast</h3>
-              <img src="http://preloaders.net/preloaders/712/Floating%20rays.gif" alt="Loading">
-            </div>
-          </div>
-        </div>
-
-    <div class="info" ng-if="loaded" class="ng-hide">
-
-      <div class="row">
-        <div class="col-md-12 text-center">
-          <h3>Weather Forecast for {{weatherDetails.city.name}}, {{weatherDetails.city.country}}</h3>
-
-          <accordion close-others="oneAtATime">
-
-          <accordion-group ng-repeat="(key, value) in weatherDetails.list">
-            
-            <accordion-heading>
-            
-            <div class="row">
-              <div class="col-md-6 text-left">
-                <span class="weather_description">
-                  <img ng-src="http://openweathermap.org/img/w/{{value.weather[0].icon}}.png"/>
-                  {{value.weather[0].description}}
-                </span>
-                <span class="weather_date">{{value.dt * 1000 | date:'dd MMM'}}</span>
-              </div>
-              <div class="col-md-6 text-right">
-                <span class="weather_temp">{{value.temp.day| number:0}}&#8451;</span>
-              </div>
-            </div>
-            </accordion-heading>
-
-            <div class="row">
-              <div class="col-md-4">
-                <h3>Humidity</h3>
-                {{value.humidity| number:0}}%
-              </div>
-              <div class="col-md-4">
-                <h3>Pressure</h3>
-                {{value.pressure| number:2}} hpa
-              </div>
-              <div class="col-md-4">
-                <h3>Wind</h3>
-                {{value.speed| number:2}} m/s
-              </div>
-            </div>
-
-          </accordion-group>
-
-          </accordion>
-        </div>
-      </div>     
-    </div>
-  </div>
-</div>
-</div>
-</body>
-</html>
+  <body ng-controller="mainController">
+    <div ng-include src="'partials/header.html'"></div>
+    <div ng-view></div>
+  </body>
+  </html>

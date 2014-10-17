@@ -1,9 +1,6 @@
 /**Float label magic from me Kevin. Rad! */
 
-input {
-    border: 1px solid #DDDDDD !important;
-    padding: 10px !important;
-    margin: 15px 0 !important;
+input, select, button {
     height: 55px !important;
 }
 label.label-floatlabel {
@@ -46,3 +43,15 @@ label.label-floatlabel {
 .weather_temp {
     top: 21px;
 }
+
+form {
+    max-width: 375px;
+    height: 65px;
+    margin: 0 auto;
+}
+
+form .form-group {
+    float: left;
+    margin: 0 15px 0 0 !important;
+}
+.btn {width: 100%;}

@@ -1,15 +1,23 @@
   //Angular.js app definition
-  var app = angular.module('origamy',['ui.bootstrap']);
+  var app = angular.module('origamy',['ngRoute','ui.bootstrap']);
 
+  app.config(function($routeProvider, $httpProvider) {
+    $routeProvider
+    .when('/', {
+      templateUrl : 'partials/index.html',
+      controller  : 'mainController'
+    })
+    .when('/weather/:zipcode/:days', {
+      templateUrl : 'partials/weather.html',
+      controller  : 'weatherController'
+    });
 
-
-  //Configura el APP para CORS requests
-  app.config(function($httpProvider) {
       //Enable cross domain calls
       $httpProvider.defaults.useXDomain = true;
 
       //Remove the header used to identify ajax call  that would prevent CORS from working
       delete $httpProvider.defaults.headers.common['X-Requested-With'];
+
     });
 
 
@@ -17,61 +25,63 @@
   //Factory
   app.factory('weatherService',['$http', '$q', function($http, $q) {
 
-    var apiEndpoint   = 'http://api.openweathermap.org/data/2.5/forecast/daily';
+    var URL   = 'http://api.openweathermap.org/data/2.5/forecast/daily';
 
       //Metodos publicos que retorna el factory
-      return{
+      return {
 
-        getWeather : function(weather, unit) {
-          var deferred = $q.defer();
-          
-          unit = typeof unit !== 'undefined' ? unit : 'metric';
-          var uri = apiEndpoint + "?q=" + weather.zipcode + "&mode=json&units=" + unit + "&cnt="+ weather.days;
-          //console.log(uri);
-          //$http.post(uri).
-          $http({ 
-            method: 'POST', 
-            url: uri 
+        getWeatherByZipcode : function(zipcode, days){
+
+          var defer = $q.defer();
+
+          $http({
+            method:'GET', 
+            url:URL,
+            params: 
+            {
+              q: zipcode,
+              mode: 'json',
+              units: 'metric',
+              cnt: days
+            }
           }).
-          success(function(data, status) {
-            deferred.resolve(data);
+          success(function(data, status, headers, config){
+            defer.resolve(data);
           }).
-          error(function (error, status) {
-            deferred.reject(error);
+          error(function(data, status, headers, config){
+            defer.reject(data);
           });
 
-          return deferred.promise;
+          return defer.promise;
         }
 
       }
 
     }]);
 
+  app.controller('weatherController', function($scope, $routeParams, weatherService) {
 
-  //Controller
-  app.controller('OrigamyCtrl', ['$scope', 'weatherService', function($scope, weatherService){
-
-    $scope.loading = false;
+    $scope.zipcode = $routeParams.zipcode;
+    $scope.loading = true;
     $scope.loaded = false;
     $scope.oneAtATime = true;
-    $scope.status = {
-      isFirstOpen: true,
-      isFirstDisabled: false
-    };
-    
+
+    weatherService.getWeatherByZipcode($routeParams.zipcode, $routeParams.days).then( function(data){
+      $scope.weatherDetails = data;
+      $scope.loading = false;
+      $scope.loaded = true;
+    });
+
+  });
+
+  app.controller('mainController', function($scope, $location) {
+    $scope.weather = {
+      days: 1
+    }
+
     $scope.getWeather = function () {
-      $scope.loading = true;
-
-      weatherService.getWeather($scope.weather).then(function(data) {
-
-        $scope.weatherDetails = data;
-          //Hide spinner
-          $scope.loading = false;
-          //Display info
-          $scope.loaded = true;
-        });
-
+      //console.log($scope.weather);
+      //$location.path('weather').search({zipcode: '11004', days: 2});
+      $location.path('weather/'+ $scope.weather.zipcode + '/' + $scope.weather.days);
     };
-
-
-  }]);
+  });

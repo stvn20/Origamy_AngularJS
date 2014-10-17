@@ -1,0 +1,53 @@
+<div class="container">
+	<div class="row">
+		<div class="col-md-12 text-center">
+			<div class="cargando" ng-if="loading">
+				<div class="row">
+					<div class="col-md-12 text-center">
+						<h3>Loading Weather Forecast for {{zipcode}}</h3>
+						<img src="http://preloaders.net/preloaders/712/Floating%20rays.gif" alt="Loading">
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="info" ng-if="loaded" class="ng-hide">
+          <div class="row">
+            <div class="col-md-12 text-center">
+              <h3>Weather Forecast for {{weatherDetails.city.name}}, {{weatherDetails.city.country}}</h3>
+              <accordion close-others="oneAtATime">
+                <accordion-group ng-repeat="(key, value) in weatherDetails.list">
+                <accordion-heading>
+                <div class="row">
+                  <div class="col-md-6 text-left">
+                    <span class="weather_description">
+                      <img ng-src="http://openweathermap.org/img/w/{{value.weather[0].icon}}.png"/>
+                      {{value.weather[0].description}}
+                    </span>
+                    <span class="weather_date">{{value.dt * 1000 | date:'dd MMM'}}</span>
+                  </div>
+                  <div class="col-md-6 text-right">
+                    <span class="weather_temp">{{value.temp.day| number:0}}&#8451;</span>
+                  </div>
+                </div>
+              </accordion-heading>
+
+              <div class="row">
+                <div class="col-md-4">
+                  <h3>Humidity</h3>
+                  {{value.humidity| number:0}}%
+                </div>
+                <div class="col-md-4">
+                  <h3>Pressure</h3>
+                  {{value.pressure| number:2}} hpa
+                </div>
+                <div class="col-md-4">
+                  <h3>Wind</h3>
+                  {{value.speed| number:2}} m/s
+                </div>
+              </div>
+            </accordion-group>
+          </accordion>
+        </div>
